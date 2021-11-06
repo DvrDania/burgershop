@@ -1,10 +1,12 @@
+use crate::schema::ingredients;
 use crate::IngredientCategory;
-use diesel::Queryable;
+use rocket::serde::{Deserialize, Serialize};
 
-#[derive(Queryable)]
+#[derive(Queryable, Serialize, Deserialize, Insertable)]
+#[table_name = "ingredients"]
 pub struct Ingredient {
     pub name: String,
-    pub amount: u32,
+    pub amount: i32,
     pub category: IngredientCategory,
     pub price: f32,
 }

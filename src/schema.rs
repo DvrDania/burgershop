@@ -1,9 +1,12 @@
 table! {
+    use diesel::sql_types::*;
+    use crate::IngredientCategoryMapping;
+
     ingredients (id) {
         id -> Int4,
         name -> Varchar,
-        amount -> Int2,
-        category -> Varchar,
-        price -> Float8,
+        amount -> Int4,
+        category -> IngredientCategoryMapping,
+        price -> Float4,
     }
 }
