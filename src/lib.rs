@@ -4,10 +4,10 @@ extern crate diesel;
 extern crate rocket;
 
 pub mod database;
-pub mod models;
 pub mod moderator;
 pub mod schema;
 
+use crate::schema::ingredients;
 use diesel_derive_enum::DbEnum;
 use rocket::serde::{Deserialize, Serialize};
 
@@ -18,4 +18,13 @@ pub enum IngredientCategory {
     Bread,
     Sauce,
     SideDish,
+}
+
+#[derive(Queryable, Serialize, Deserialize, Insertable)]
+#[table_name = "ingredients"]
+pub struct Ingredient {
+    pub name: String,
+    pub amount: i32,
+    pub category: IngredientCategory,
+    pub price: f32,
 }
