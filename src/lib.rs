@@ -5,6 +5,7 @@ extern crate rocket;
 
 pub mod database;
 pub mod moderator;
+pub mod public;
 pub mod schema;
 
 use crate::schema::ingredients;

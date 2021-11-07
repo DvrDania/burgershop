@@ -1,10 +1,10 @@
 use crate::database;
-use crate::models::Ingredient;
 use crate::schema::ingredients;
+use crate::Ingredient;
 use diesel::prelude::*;
 use rocket::serde::json::Json;
 
-#[post("/fill-ingredients", data = "<items>", format = "json")]
+#[post("/ingredients", data = "<items>", format = "json")]
 pub fn fill_ingredients(items: Json<Vec<Ingredient>>) {
     let connection = database::establish_connection();
     let items = items.into_inner();
