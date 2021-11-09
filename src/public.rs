@@ -1,5 +1,4 @@
-use crate::database::{self, ingredients};
-use crate::IngredientCategory;
+use crate::database::{self, ingredients, Ingredient};
 use diesel::prelude::*;
 
 #[get("/ingredients")]

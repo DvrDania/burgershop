@@ -28,10 +28,10 @@ table! {
 
 /// database ingredients structure
 #[derive(Queryable, Debug)]
-struct Ingredient {
-    id: i32,
-    name: String,
-    amount: i32,
-    category: IngredientCategory,
-    price: f32,
+pub struct Ingredient {
+    pub id: i32,
+    pub name: String,
+    pub amount: i32,
+    pub category: IngredientCategory,
+    pub price: f32,
 }
