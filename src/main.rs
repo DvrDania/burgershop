@@ -8,5 +8,5 @@ use burgershop::public;
 fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![public::get_ingredients])
-        .mount("/mod", routes![moderator::fill_ingredients])
+        .mount("/", routes![moderator::set_ingredients])
 }

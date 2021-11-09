@@ -1,15 +1,6 @@
-use crate::schema::ingredients;
-use crate::{database, IngredientCategory};
+use crate::database::{self, ingredients};
+use crate::IngredientCategory;
 use diesel::prelude::*;
-
-#[derive(Queryable, Debug)]
-struct Ingredient {
-    id: i32,
-    name: String,
-    amount: i32,
-    category: IngredientCategory,
-    price: f32,
-}
 
 #[get("/ingredients")]
 pub fn get_ingredients() {
