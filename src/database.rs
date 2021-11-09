@@ -2,6 +2,7 @@ use crate::IngredientCategory;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenv::dotenv;
+use rocket::serde::Serialize;
 use std::env;
 
 /// establish connection to Postgres database
@@ -27,7 +28,7 @@ table! {
 }
 
 /// database ingredients structure
-#[derive(Queryable, Debug)]
+#[derive(Queryable, Serialize, Debug)]
 pub struct Ingredient {
     pub id: i32,
     pub name: String,
