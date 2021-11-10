@@ -16,9 +16,10 @@ use rocket::serde::{Deserialize, Serialize};
 pub enum IngredientCategory {
     Burger,
     Topping,
-    Bread,
+    Bun,
     Sauce,
     SideDish,
+    Drink,
 }
 
 /// native ingredients structure for burgershop

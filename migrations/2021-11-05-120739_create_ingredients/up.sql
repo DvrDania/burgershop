@@ -1,5 +1,4 @@
--- Your SQL goes here
-CREATE TYPE ingredient_category AS ENUM ('burger', 'topping', 'bread', 'sauce', 'side_dish');
+CREATE TYPE ingredient_category AS ENUM ('burger', 'topping', 'bun', 'sauce', 'side_dish', 'drink');
 
 CREATE TABLE ingredients (
 	id SERIAL PRIMARY KEY,
