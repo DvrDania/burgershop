@@ -1,5 +1,6 @@
 use crate::api_response::ApiResponse;
-use crate::database::{self, ingredients, Ingredient};
+use crate::database::{self, Ingredient};
+use crate::schema::ingredients;
 use diesel::prelude::*;
 use rocket::serde::json::Json;
 

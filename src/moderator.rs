@@ -1,6 +1,6 @@
 use crate::api_response::ApiResponse;
-use crate::database::{self, ingredients};
-use crate::Ingredient;
+use crate::schema::ingredients;
+use crate::{database, Ingredient};
 use diesel::prelude::*;
 use rocket::http::{ContentType, Status};
 use rocket::serde::json::Json;

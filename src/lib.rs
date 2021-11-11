@@ -7,8 +7,9 @@ pub mod api_response;
 pub mod database;
 pub mod moderator;
 pub mod public;
+pub mod schema;
 
-use crate::database::ingredients;
+use crate::schema::ingredients;
 use diesel_derive_enum::DbEnum;
 use rocket::serde::{Deserialize, Serialize};
 
@@ -20,6 +21,20 @@ pub enum IngredientCategory {
     Sauce,
     SideDish,
     Drink,
+}
+
+#[derive(Debug, DbEnum)]
+pub enum TableStatus {
+    Available,
+    InUse,
+}
+
+#[derive(Debug, DbEnum)]
+pub enum OrderStatus {
+    NotPaid,
+    InQueue,
+    Processing,
+    Fulfilled,
 }
 
 /// native ingredients structure for burgershop

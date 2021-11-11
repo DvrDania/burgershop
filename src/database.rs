@@ -13,20 +13,6 @@ pub fn establish_connection() -> PgConnection {
     PgConnection::establish(&database_url).expect(&format!("Error connecting to {}", database_url))
 }
 
-// schema
-table! {
-    use diesel::sql_types::*;
-    use crate::IngredientCategoryMapping;
-
-    ingredients (id) {
-        id -> Int4,
-        name -> Varchar,
-        amount -> Int4,
-        category -> IngredientCategoryMapping,
-        price -> Float4,
-    }
-}
-
 /// database ingredients structure
 #[derive(Queryable, Serialize, Debug)]
 pub struct Ingredient {
