@@ -38,7 +38,7 @@ pub enum OrderStatus {
 }
 
 /// native ingredients structure for burgershop
-#[derive(Serialize, Deserialize, Insertable)]
+#[derive(AsChangeset, Deserialize, Insertable)]
 #[table_name = "ingredients"]
 pub struct Ingredient {
     pub name: String,

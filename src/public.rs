@@ -8,6 +8,7 @@ use rocket::serde::json::Json;
 pub fn get_ingredients() -> Json<ApiResponse<Vec<Ingredient>>> {
     let conn = database::establish_connection();
     let results = ingredients::table
+        .order(ingredients::category)
         .load::<Ingredient>(&conn)
         .expect("Error getting ingredients");
 
