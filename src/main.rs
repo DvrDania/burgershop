@@ -1,8 +1,12 @@
 #[macro_use]
 extern crate rocket;
 
-use burgershop::moderator::*;
-use burgershop::public::*;
+pub mod api_response;
+pub mod moderator;
+pub mod public;
+
+use moderator::*;
+use public::*;
 
 #[launch]
 fn rocket() -> _ {
