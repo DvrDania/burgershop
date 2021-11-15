@@ -9,11 +9,11 @@ pub struct ApiResponse<T> {
 }
 
 impl<T> ApiResponse<T> {
-    pub fn from(data: T, message: String) -> Json<Self> {
+    pub fn from(data: Option<T>, message: String) -> Json<Self> {
         Json(ApiResponse {
             success: true,
             message,
-            data: Some(data),
+            data,
         })
     }
 

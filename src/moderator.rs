@@ -6,16 +6,8 @@ use crate::api_response::ApiResponse;
 pub fn set_ingredients(items: Json<Vec<burgershop::Ingredient>>) -> Json<ApiResponse<()>> {
     let items = items.into_inner();
     match burgershop::Ingredient::set(items) {
-        Ok(_) => Json(ApiResponse {
-            success: true,
-            message: "Ingredients set successfully".to_string(),
-            data: None,
-        }),
-        Err(e) => Json(ApiResponse {
-            success: false,
-            message: e.to_string(),
-            data: None,
-        }),
+        Ok(_) => ApiResponse::from(None, "Ingredients set successfully".to_string()),
+        Err(e) => ApiResponse::from_error(e),
     }
 }
 
@@ -26,31 +18,15 @@ pub fn update_ingredient(
 ) -> Json<ApiResponse<()>> {
     let new_value = new_value.into_inner();
     match burgershop::Ingredient::update(id, new_value) {
-        Ok(_) => Json(ApiResponse {
-            success: true,
-            message: "Ingredient updated successfully".to_string(),
-            data: None,
-        }),
-        Err(e) => Json(ApiResponse {
-            success: false,
-            message: e.to_string(),
-            data: None,
-        }),
+        Ok(_) => ApiResponse::from(None, "Ingredient updated successfully".to_string()),
+        Err(e) => ApiResponse::from_error(e),
     }
 }
 
 #[delete("/ingredients/<id>")]
 pub fn delete_ingredient(id: u32) -> Json<ApiResponse<()>> {
     match burgershop::Ingredient::delete(id) {
-        Ok(_) => Json(ApiResponse {
-            success: true,
-            message: "Ingredient deleted successfully".to_string(),
-            data: None,
-        }),
-        Err(e) => Json(ApiResponse {
-            success: false,
-            message: e.to_string(),
-            data: None,
-        }),
+        Ok(_) => ApiResponse::from(None, "Ingredient deleted successfully".to_string()),
+        Err(e) => ApiResponse::from_error(e),
     }
 }

@@ -5,7 +5,7 @@ use rocket::serde::json::Json;
 pub fn get_ingredients() -> Json<ApiResponse<Vec<burgershop::database::Ingredient>>> {
     match burgershop::Ingredient::get() {
         Ok(ingredients) => ApiResponse::from(
-            ingredients.clone(),
+            Some(ingredients.clone()),
             format!("Got {} ingredients", ingredients.len()),
         ),
         Err(e) => ApiResponse::from_error(e),
