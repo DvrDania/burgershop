@@ -10,7 +10,7 @@ use rocket::serde::Deserialize;
 use rocket::serde::Serialize;
 use schema::ingredients;
 
-#[derive(Serialize, Deserialize, Debug, DbEnum)]
+#[derive(Serialize, Deserialize, Debug, DbEnum, Clone)]
 pub enum IngredientCategory {
     Burger,
     Topping,

@@ -14,7 +14,7 @@ pub fn establish_connection() -> PgConnection {
 }
 
 /// database ingredients structure
-#[derive(Queryable, Serialize, Debug)]
+#[derive(Queryable, Serialize, Debug, Clone)]
 pub struct Ingredient {
     pub id: i32,
     pub name: String,
