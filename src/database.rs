@@ -6,11 +6,11 @@ use rocket::serde::Serialize;
 use std::env;
 
 /// establish connection to Postgres database
-pub fn establish_connection() -> Result<PgConnection, ConnectionError> {
+pub fn establish_connection() -> PgConnection {
     dotenv().ok();
 
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    PgConnection::establish(&database_url)
+    PgConnection::establish(&database_url).expect(&format!("Error connecting to {}", database_url))
 }
 
 /// database ingredients structure
