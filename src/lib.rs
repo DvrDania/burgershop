@@ -8,7 +8,7 @@ use diesel::prelude::*;
 use diesel_derive_enum::DbEnum;
 use rocket::serde::Deserialize;
 use rocket::serde::Serialize;
-use schema::ingredients;
+use schema::{ingredients, tables};
 
 #[derive(Serialize, Deserialize, Debug, DbEnum, Clone)]
 pub enum IngredientCategory {
@@ -63,9 +63,35 @@ impl Ingredient {
 }
 
 #[derive(DbEnum, Debug)]
-enum TableStatus {
+pub enum TableStatus {
     Available,
     InUse,
+}
+
+#[derive(Insertable)]
+#[table_name = "tables"]
+pub struct BShopTable {
+    number: i32,
+    status: TableStatus,
+}
+
+impl BShopTable {
+    pub fn from_numbers(numbers: Vec<u32>) -> QueryResult<usize> {
+        let conn = database::establish_connection();
+        let mut tables_vec = vec![];
+
+        for number in numbers {
+            let number = number as i32;
+            let new_table = BShopTable {
+                number,
+                status: TableStatus::Available,
+            };
+            tables_vec.push(new_table);
+        }
+        diesel::insert_into(tables::table)
+            .values(tables_vec)
+            .execute(&conn)
+    }
 }
 
 #[derive(DbEnum, Debug)]

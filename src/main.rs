@@ -16,6 +16,11 @@ fn rocket() -> _ {
         // routes that are private and need authentication
         .mount(
             "/",
-            routes![set_ingredients, update_ingredient, delete_ingredient],
+            routes![
+                set_ingredients,
+                update_ingredient,
+                delete_ingredient,
+                set_tables
+            ],
         )
 }
