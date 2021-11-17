@@ -16,8 +16,14 @@ impl<T> ApiResponse<T> {
             data,
         })
     }
-
     pub fn from_error(e: diesel::result::Error) -> Json<Self> {
+        Json(ApiResponse {
+            success: false,
+            message: e.to_string(),
+            data: None,
+        })
+    }
+    pub fn from_error_str(e: &str) -> Json<Self> {
         Json(ApiResponse {
             success: false,
             message: e.to_string(),

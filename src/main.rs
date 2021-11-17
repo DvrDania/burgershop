@@ -12,7 +12,7 @@ use moderator::*;
 fn rocket() -> _ {
     rocket::build()
         // routes that are public and do not need authentication
-        .mount("/", routes![get_burgers])
+        .mount("/", routes![get_burgers, set_burgers])
         // routes that are private and need authentication
         .mount(
             "/",
