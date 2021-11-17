@@ -36,12 +36,18 @@ impl Ingredient {
             .values(&items)
             .execute(&conn)
     }
-    pub fn get() -> QueryResult<Vec<database::Ingredient>> {
+    pub fn get(category: Option<IngredientCategory>) -> QueryResult<Vec<database::Ingredient>> {
         let conn = database::establish_connection();
 
-        ingredients::table
-            .order(ingredients::category.asc())
-            .load(&conn)
+        match category {
+            Some(category) => ingredients::table
+                .filter(ingredients::category.eq(category))
+                .order(ingredients::category.asc())
+                .load(&conn),
+            None => ingredients::table
+                .order(ingredients::category.asc())
+                .load(&conn),
+        }
     }
     pub fn update(id: u32, new: Ingredient) -> QueryResult<usize> {
         let id = id as i32;
@@ -95,9 +101,15 @@ impl BShopTable {
 }
 
 #[derive(DbEnum, Debug)]
-enum OrderStatus {
+pub enum OrderStatus {
     NotPaid,
     InQueue,
     Processing,
     Fulfilled,
+}
+
+pub struct Order {
+    pub table_id: i32,
+    pub status: OrderStatus,
+    pub total: f32,
 }
