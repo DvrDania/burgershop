@@ -34,7 +34,7 @@ pub fn delete_ingredient(id: u32) -> Json<ApiResponse<()>> {
 #[post("/tables", format = "json", data = "<numbers>")]
 pub fn set_tables(numbers: Json<Vec<u32>>) -> Json<ApiResponse<()>> {
     let numbers = numbers.into_inner();
-    match burgershop::BShopTable::from_numbers(numbers) {
+    match burgershop::BShopTable::set(numbers) {
         Ok(_) => ApiResponse::from(None, "Tables set successfully".to_string()),
         Err(e) => ApiResponse::from_error(e),
     }

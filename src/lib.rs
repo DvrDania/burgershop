@@ -8,13 +8,13 @@ use diesel::prelude::*;
 use diesel_derive_enum::DbEnum;
 use rocket::serde::Deserialize;
 use rocket::serde::Serialize;
-use schema::{ingredients, order_items, orders, tables};
+use schema::{ingredients, order_item_ingredients, order_items, orders, tables};
 
 #[derive(Serialize, Deserialize, Debug, DbEnum, Clone)]
 pub enum IngredientCategory {
+    Bun,
     Burger,
     Topping,
-    Bun,
     Sauce,
     SideDish,
     Drink,
@@ -36,18 +36,12 @@ impl Ingredient {
             .values(&items)
             .execute(&conn)
     }
-    pub fn get(category: Option<IngredientCategory>) -> QueryResult<Vec<database::Ingredient>> {
+    pub fn get() -> QueryResult<Vec<database::Ingredient>> {
         let conn = database::establish_connection();
 
-        match category {
-            Some(category) => ingredients::table
-                .filter(ingredients::category.eq(category))
-                .order(ingredients::category.asc())
-                .load(&conn),
-            None => ingredients::table
-                .order(ingredients::category.asc())
-                .load(&conn),
-        }
+        ingredients::table
+            .order(ingredients::category.asc())
+            .load(&conn)
     }
     pub fn update(id: u32, new: Ingredient) -> QueryResult<usize> {
         let id = id as i32;
@@ -82,7 +76,7 @@ pub struct BShopTable {
 }
 
 impl BShopTable {
-    pub fn from_numbers(numbers: Vec<u32>) -> QueryResult<usize> {
+    pub fn set(numbers: Vec<u32>) -> QueryResult<usize> {
         let conn = database::establish_connection();
         let mut tables_vec = vec![];
 
@@ -98,6 +92,20 @@ impl BShopTable {
             .values(tables_vec)
             .execute(&conn)
     }
+    pub fn take(table_number: u32) -> QueryResult<usize> {
+        let conn = database::establish_connection();
+
+        diesel::update(tables::table.find(table_number as i32))
+            .set(tables::status.eq(TableStatus::InUse))
+            .execute(&conn)
+    }
+    pub fn leave(table_number: u32) -> QueryResult<usize> {
+        let conn = database::establish_connection();
+
+        diesel::update(tables::table.find(table_number as i32))
+            .set(tables::status.eq(TableStatus::Available))
+            .execute(&conn)
+    }
 }
 
 #[derive(DbEnum, Debug)]
@@ -110,74 +118,77 @@ pub enum OrderStatus {
 
 #[derive(Insertable)]
 pub struct Order {
-    pub table_id: i32,
+    pub table_number: i32,
     pub status: OrderStatus,
     pub total: f32,
 }
-
 impl Order {
-    pub fn add_item(order_id: u32, ingredient_id: u32, amount: u32) -> QueryResult<usize> {
-        let order_id = order_id as i32;
-        let ingredient_id = ingredient_id as i32;
-        let amount = amount as i32;
-
+    /// creates new order for specified table
+    pub fn new(table_number: u32) -> QueryResult<usize> {
+        let table_number = table_number as i32;
         let conn = database::establish_connection();
 
-        let order_item = OrderItem {
-            ingredient_id,
-            order_id,
-            amount,
-            total: OrderItem::calculate_total(ingredient_id as u32, amount as u32)?,
-        };
-
-        diesel::update(orders::table.filter(orders::id.eq(order_item.order_id)))
-            .set(orders::total.eq(orders::total + order_item.total))
-            .execute(&conn)?;
-
-        diesel::insert_into(order_items::table)
-            .values(&order_item)
+        diesel::insert_into(orders::table)
+            .values(Order {
+                table_number,
+                status: OrderStatus::NotPaid,
+                total: 0.0,
+            })
             .execute(&conn)
     }
-    /// creates a new order and returns its id
-    pub fn new(table_number: u32) -> QueryResult<i32> {
-        let conn = database::establish_connection();
-        let table_number = table_number as i32;
-        let table_id = tables::table
-            .filter(tables::number.eq(table_number))
-            .first::<database::BShopTable>(&conn)?
-            .id;
-
-        let new_order = Order {
-            table_id,
-            status: OrderStatus::NotPaid,
-            total: 0.0,
-        };
-
-        Ok(diesel::insert_into(orders::table)
-            .values(&new_order)
-            .get_result::<database::Order>(&conn)?
-            .id)
-    }
+    pub fn add_ingredient() {}
 }
 
 #[derive(Insertable)]
 pub struct OrderItem {
-    pub ingredient_id: i32,
     pub order_id: i32,
+    pub total: f32,
+}
+impl OrderItem {
+    /// adds new item for specified order
+    pub fn new(order_id: u32) -> QueryResult<usize> {
+        let order_id = order_id as i32;
+        let conn = database::establish_connection();
+
+        diesel::insert_into(order_items::table)
+            .values(OrderItem {
+                order_id,
+                total: 0.0,
+            })
+            .execute(&conn)
+    }
+}
+
+#[derive(Insertable)]
+pub struct OrderItemIngredient {
+    pub order_item_id: i32,
+    pub ingredient_id: i32,
     pub amount: i32,
     pub total: f32,
 }
+impl OrderItemIngredient {
+    pub fn add(order_item_id: u32, ingredient_id: u32, amount: u32) -> QueryResult<usize> {
+        let conn = database::establish_connection();
 
-impl OrderItem {
-    pub fn calculate_total(ingredient_id: u32, amount: u32) -> QueryResult<f32> {
+        let total = ingredients::table
+            .find(ingredient_id as i32)
+            .first::<database::Ingredient>(&conn)?
+            .price
+            * amount as f32;
+
+        let order_item_id = order_item_id as i32;
         let ingredient_id = ingredient_id as i32;
         let amount = amount as i32;
 
-        let conn = database::establish_connection();
+        let new = OrderItemIngredient {
+            order_item_id,
+            ingredient_id,
+            amount,
+            total,
+        };
 
-        let ingredient: database::Ingredient =
-            ingredients::table.find(ingredient_id).first(&conn)?;
-
-        Ok(ingredient.price * amount as f32)
+        diesel::insert_into(order_item_ingredients::table)
+            .values(new)
+            .execute(&conn)
     }
 }

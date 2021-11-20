@@ -1,4 +1,4 @@
-use crate::{IngredientCategory, OrderStatus, TableStatus};
+use crate::{IngredientCategory, TableStatus};
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenv::dotenv;
@@ -28,12 +28,4 @@ pub struct BShopTable {
     pub id: i32,
     pub number: i32,
     pub status: TableStatus,
-}
-
-#[derive(Queryable)]
-pub struct Order {
-    pub id: i32,
-    pub table_id: i32,
-    pub status: OrderStatus,
-    pub total: f32,
 }
